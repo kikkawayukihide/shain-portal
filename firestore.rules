@@ -1,0 +1,38 @@
+rules_version = '2';
+
+// 社内ポータル 初期版セキュリティルール（無料枠・カード登録なしで動かすための簡易版）
+// ポイント：
+// ・documents / stores は「読むだけ」なら誰でも可（社内向けの案内文書なので）。書き込みはNG（管理はFirebaseコンソールから行う）
+// ・employees は「IDを直接指定して1件取得」だけ許可し、「一覧取得（list）」は禁止。
+//   LINEのユーザーIDは長いランダム文字列なので、他人のIDを知らない限り中身は見えない
+// ・viewLogs は「新規作成のみ」許可し、読み取りはNG（誰が何を見たかは管理者側の別画面だけで見られるようにする想定）
+//
+// 【今後の課題】本格運用する場合は、Firebase Authenticationと連携してLINEユーザーIDを
+// サーバー側で検証する仕組み（Cloud Functions・要Blazeプラン＝カード登録）を追加すると、
+// なりすまし対策がより強固になります。まずはこの簡易版で試験運用する想定です。
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /stores/{storeId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    match /documents/{docId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    match /employees/{employeeId} {
+      allow get: if true;
+      allow list: if false;
+      allow write: if false;
+    }
+
+    match /viewLogs/{logId} {
+      allow create: if true;
+      allow read, update, delete: if false;
+    }
+  }
+}
