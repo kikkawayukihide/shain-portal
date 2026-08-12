@@ -20,3 +20,9 @@ export const CATEGORIES = [
   { key: "manual", label: "店舗マニュアル", icon: "📕" },
   { key: "notice", label: "お知らせ", icon: "📣" },
 ];
+
+// 管理画面（admin.html）にログインできるGoogleアカウントのメールアドレス一覧。
+// 増やしたいときは、ここにカンマ区切りで追加してください。
+export const ADMIN_EMAILS = [
+  "kikkawa@rot-group.com",
+];

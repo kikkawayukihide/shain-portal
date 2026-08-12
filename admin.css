@@ -1,0 +1,107 @@
+#app {
+  max-width: 640px;
+}
+
+.login-box {
+  padding: 60px 24px;
+  text-align: center;
+}
+
+.google-btn {
+  margin-top: 24px;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.denied-box {
+  padding: 60px 24px;
+  text-align: center;
+  color: #b23b3b;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  background: #eef7f0;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 13px;
+}
+
+.signout-link {
+  color: #06c755;
+  text-decoration: underline;
+  background: none;
+  border: none;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.request-card {
+  background: #fff;
+  border: 1px solid #e2e2e2;
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-bottom: 14px;
+}
+
+.request-card .req-name {
+  font-weight: bold;
+  font-size: 15px;
+  margin-bottom: 2px;
+}
+
+.request-card .req-id {
+  font-size: 11px;
+  color: #999;
+  word-break: break-all;
+  margin-bottom: 12px;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.form-row label {
+  font-size: 12px;
+  color: #666;
+}
+
+.form-row input,
+.form-row select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.approve-btn {
+  background: #06c755;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 6px;
+}
+
+.reject-btn {
+  background: none;
+  border: none;
+  color: #999;
+  font-size: 12px;
+  text-decoration: underline;
+  cursor: pointer;
+  margin-left: 12px;
+}

@@ -5,6 +5,7 @@ import {
   getFirestore,
   doc,
   getDoc,
+  setDoc,
   collection,
   query,
   where,
@@ -128,23 +129,38 @@ function renderNotRegistered(profile) {
     <div class="main">
       <div class="message">
         まだ利用登録がされていません。<br>
-        下のIDをコピーして、管理者にLINEなどで送り、登録をお願いしてください。
-        <div class="id-box">${escapeHtml(profile.userId)}</div>
-        <button class="copy-btn" id="copyIdBtn">IDをコピーする</button>
-        <div id="copyResult" style="margin-top:10px;font-size:13px;color:#06c755;"></div>
+        下のボタンを押すと、管理者に登録リクエストが届きます。
+        <div id="requestArea">
+          <button class="copy-btn" id="requestBtn">登録をリクエストする</button>
+        </div>
+        <div id="requestResult" style="margin-top:14px;font-size:13px;color:#06c755;"></div>
+        <details style="margin-top:24px;text-align:left;color:#888;font-size:12px;">
+          <summary>うまくいかない場合</summary>
+          <p>下のIDを管理者にLINEなどで直接伝えてください。</p>
+          <div class="id-box">${escapeHtml(profile.userId)}</div>
+        </details>
       </div>
     </div>
   `);
 
-  const btn = document.getElementById("copyIdBtn");
-  const result = document.getElementById("copyResult");
+  const btn = document.getElementById("requestBtn");
+  const result = document.getElementById("requestResult");
   if (btn) {
     btn.addEventListener("click", async () => {
+      btn.disabled = true;
+      btn.textContent = "送信中…";
       try {
-        await navigator.clipboard.writeText(profile.userId);
-        result.textContent = "コピーしました。LINEのトークなどに貼り付けて管理者に送ってください。";
+        await setDoc(doc(db, "registrationRequests", profile.userId), {
+          displayName: profile.displayName || "",
+          requestedAt: serverTimestamp(),
+        });
+        document.getElementById("requestArea").innerHTML = "";
+        result.textContent = "リクエストを送りました。管理者が承認すると使えるようになります。";
       } catch (e) {
-        result.textContent = "コピーできませんでした。上のIDを長押しして手動でコピーしてください。";
+        btn.disabled = false;
+        btn.textContent = "登録をリクエストする";
+        result.style.color = "#d33";
+        result.textContent = "送信に失敗しました。時間をおいてもう一度お試しください。";
         console.error(e);
       }
     });
