@@ -3,8 +3,7 @@ import { firebaseConfig, ADMIN_EMAILS } from "./config.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
 import {
   getAuth,
-  GoogleAuthProvider,
-  signInWithPopup,
+  signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
@@ -39,13 +38,29 @@ function renderLogin() {
   render(`
     <div class="login-box">
       <h2>社内ポータル 管理画面</h2>
-      <p>管理者用のGoogleアカウントでログインしてください。</p>
-      <button class="google-btn" id="googleLoginBtn">Googleでログイン</button>
+      <p>管理者用のメールアドレスとパスワードでログインしてください。</p>
+      <form id="loginForm" style="max-width:320px;margin:24px auto 0;text-align:left;">
+        <div class="form-row">
+          <label>メールアドレス</label>
+          <input type="email" id="emailInput" required />
+        </div>
+        <div class="form-row">
+          <label>パスワード</label>
+          <input type="password" id="passwordInput" required />
+        </div>
+        <button type="submit" class="google-btn" style="width:100%;">ログイン</button>
+        <div id="loginError" style="margin-top:10px;color:#d33;font-size:13px;"></div>
+      </form>
     </div>
   `);
-  document.getElementById("googleLoginBtn").addEventListener("click", () => {
-    signInWithPopup(auth, new GoogleAuthProvider()).catch((e) => {
-      alert("ログインに失敗しました: " + e.message);
+  document.getElementById("loginForm").addEventListener("submit", (ev) => {
+    ev.preventDefault();
+    const email = document.getElementById("emailInput").value.trim();
+    const password = document.getElementById("passwordInput").value;
+    const errorEl = document.getElementById("loginError");
+    errorEl.textContent = "";
+    signInWithEmailAndPassword(auth, email, password).catch((e) => {
+      errorEl.textContent = "ログインできませんでした。メールアドレスとパスワードを確認してください。";
       console.error(e);
     });
   });
