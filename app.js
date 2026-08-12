@@ -124,15 +124,31 @@ async function boot() {
 
 function renderNotRegistered(profile) {
   render(`
-    ${header("社内ポータル")}
+    ${header("社内ポータル（試作）")}
     <div class="main">
       <div class="message">
         まだ利用登録がされていません。<br>
-        下のIDを管理者に伝えて、登録をお願いしてください。
+        下のIDをコピーして、管理者にLINEなどで送り、登録をお願いしてください。
         <div class="id-box">${escapeHtml(profile.userId)}</div>
+        <button class="copy-btn" id="copyIdBtn">IDをコピーする</button>
+        <div id="copyResult" style="margin-top:10px;font-size:13px;color:#06c755;"></div>
       </div>
     </div>
   `);
+
+  const btn = document.getElementById("copyIdBtn");
+  const result = document.getElementById("copyResult");
+  if (btn) {
+    btn.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(profile.userId);
+        result.textContent = "コピーしました。LINEのトークなどに貼り付けて管理者に送ってください。";
+      } catch (e) {
+        result.textContent = "コピーできませんでした。上のIDを長押しして手動でコピーしてください。";
+        console.error(e);
+      }
+    });
+  }
 }
 
 // ---------- ホーム画面 ----------
@@ -148,7 +164,7 @@ function renderHome() {
   ).join("");
 
   render(`
-    ${header("社内ポータル")}
+    ${header("社内ポータル（試作）")}
     ${userBar()}
     <div class="main">
       <div class="tiles">${tiles}</div>
