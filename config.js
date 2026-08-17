@@ -16,6 +16,7 @@ export const firebaseConfig = {
 // カテゴリの内部名と、画面に表示する日本語名の対応
 export const CATEGORIES = [
   { key: "rules", label: "就業規則", icon: "📘" },
+  { key: "credo", label: "クレド", icon: "💚" },
   { key: "company", label: "会社規程", icon: "📗" },
   { key: "manual", label: "店舗マニュアル", icon: "📕" },
   { key: "notice", label: "お知らせ", icon: "📣" },

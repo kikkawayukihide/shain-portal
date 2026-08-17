@@ -118,7 +118,64 @@ async function boot() {
     role: emp.role || "member",
   };
 
-  renderHome();
+  // リッチメニューなどから「?doc=rules」のように指定されている場合は、
+  // ホーム画面を経由せず、そのカテゴリの文書を直接開く
+  const params = new URLSearchParams(window.location.search);
+  const directDoc = params.get("doc");
+  const directCategory = CATEGORIES.find((c) => c.key === directDoc);
+
+  if (directCategory) {
+    openCategoryDirect(directCategory.key, directCategory.label);
+  } else {
+    renderHome();
+  }
+}
+
+// ---------- カテゴリの文書を1件だけ直接開く（リッチメニュー用） ----------
+
+async function openCategoryDirect(categoryKey, label) {
+  render(`
+    ${header(label, { onBack: true })}
+    <div class="main"><div class="loading">読み込み中です…</div></div>
+  `);
+  bindBack(renderHome);
+
+  const item = await fetchLatestDocument(categoryKey);
+
+  if (!item) {
+    render(`
+      ${header(label, { onBack: true })}
+      <div class="main"><div class="empty">まだ文書が登録されていません</div></div>
+    `);
+    bindBack(renderHome);
+    return;
+  }
+
+  openDocument(item, renderHome);
+}
+
+// カテゴリに該当する文書（全社共通＋自店舗）のうち、最新のものを1件返す
+async function fetchLatestDocument(categoryKey) {
+  const docsCol = collection(db, "documents");
+
+  const [allWideSnap, storeSnap] = await Promise.all([
+    getDocs(query(docsCol, where("category", "==", categoryKey), where("storeId", "==", "all"))),
+    currentEmployee.storeId
+      ? getDocs(query(docsCol, where("category", "==", categoryKey), where("storeId", "==", currentEmployee.storeId)))
+      : Promise.resolve({ forEach: () => {} }),
+  ]);
+
+  const items = [];
+  allWideSnap.forEach((d) => items.push({ id: d.id, ...d.data() }));
+  storeSnap.forEach((d) => items.push({ id: d.id, ...d.data() }));
+
+  items.sort((a, b) => {
+    const ta = a.updatedAt?.toMillis ? a.updatedAt.toMillis() : 0;
+    const tb = b.updatedAt?.toMillis ? b.updatedAt.toMillis() : 0;
+    return tb - ta;
+  });
+
+  return items[0] || null;
 }
 
 // ---------- 未登録の従業員向け画面 ----------
